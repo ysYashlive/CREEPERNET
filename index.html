@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CREEPER NET - Minecraft Server</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Orbitron', monospace;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #00ff41;
+            overflow-x: hidden;
+        }
+
+        /* Creeper Glow Effect */
+        .glow {
+            text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41, 0 0 30px #00ff41; }
+            to { text-shadow: 0 0 20px #00ff41, 0 0 30px #00ff41, 0 0 40px #00ff41, 0 0 50px #00ff41; }
+        }
+
+        /* Header */
+        header {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 2px solid #00ff41;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00ff41;
+        }
+
+        .logo i {
+            color: #00ff41;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #00ff41;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: #fff;
+            text-shadow: 0 0 10px #00ff41;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background: #00ff41;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="%2300ff41" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>') repeat;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .server-ip {
+            font-size: 1.5rem;
+            background: rgba(0, 255, 65, 0.2);
+            padding: 1rem 2rem;
+            border: 2px solid #00ff41;
+            border-radius: 10px;
+            margin: 2rem 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .server-ip:hover {
+            background: rgba(0, 255, 65, 0.3);
+            transform: scale(1.05);
+            box-shadow: 0 0 20px #00ff41;
+        }
+
+        .copy-btn {
+            background: #00ff41;
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            margin-left: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #00cc33;
+            transform: scale(1.1);
+        }
+
+        /* Sections */
+        .section {
+            padding: 5rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section h2 {
+            font-size: 2.5rem;
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #00ff41;
+        }
+
+        /* Info Cards */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .info-card {
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 65, 0.3);
+        }
+
+        .info-card i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #00ff41;
+        }
+
+        /* Store Section */
+        .store-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .store-item {
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .store-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 65, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .store-item:hover::before {
+            left: 100%;
+        }
+
+        .store-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px #00ff41;
+        }
+
+        .price {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #00ff41;
+            margin: 1rem 0;
+        }
+
+        .buy-btn {
+            background: linear-gradient(45deg, #00ff41, #00cc33);
+            color: #000;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 255, 65, 0.5);
+        }
+
+        /* Staff Section */
+        .staff-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .staff-card {
+            background: rgba(0, 255, 65, 0.1);
+            border: 2px solid #00ff41;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .staff-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 255, 65, 0.3);
+        }
+
+        /* Discord Button */
+        .discord-btn {
+            display: inline-block;
+            background: linear-gradient(45deg, #5865F2, #4752C4);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin: 2rem auto;
+            display: block;
+            width: fit-content;
+            transition: all 0.3s ease;
+        }
+
+        .discord-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(88, 101, 242, 0.5);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.95);
+            text-align: center;
+            padding: 2rem;
+            border-top: 2px solid #00ff41;
+            margin-top: 5rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .server-ip {
+                font-size: 1.2rem;
+                padding: 0.8rem 1.5rem;
+            }
+        }
+
+        /* Scroll to top */
+        .scroll-top {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #00ff41;
+            color: #000;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.5rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .scroll-top.show {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button class="scroll-top" onclick="scrollToTop()" id="scrollTop">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <!-- Header -->
+    <header>
+        <nav>
+            <div class="logo">
+                <i class="fas fa-bolt"></i> CREEPER NET
+            </div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#info">Info</a></li>
+                <li><a href="#store">Store</a></li>
+                <li><a href="#staff">Staff</a></li>
+                <li><a href="#support">Support</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <h1 class="glow">CREEPER NET</h1>
+        <div class="server-ip" onclick="copyIP()">
+            <strong>play.creepernet.fun</strong>
+            <button class="copy-btn" onclick="copyIP(event)">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+        </div>
+        <p style="font-size: 1.2rem; margin-top: 1rem;">Join the ultimate creeper explosion!</p>
+    </section>
+
+    <!-- Server Info -->
+    <section id="info" class="section">
+        <h2 class="glow"><i class="fas fa-info-circle"></i> Server Information</h2>
+        <div class="info-grid">
+            <div class="info-card">
+                <i class="fas fa-crown"></i>
+                <h3>Owner</h3>
+                <p><strong>YASH</strong></p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-star"></i>
+                <h3>Founder</h3>
+                <p><strong>ARITRAGAMERRZ</strong></p>
+            </div>
+            <div class="info-card">
+                <i class="fas fa-server"></i>
+                <h3>Server IP</h3>
+                <p><strong>play.creepernet.fun</strong></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Store -->
+    <section id="store" class="section">
+        <h2 class="glow"><i class="fas fa-store"></i> Creeper Store</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">
+            Buy coins and ranks with real money! Support the server!
+        </p>
+        <div class="store-grid">
+            <div class="store-item">
+                <i class="fas fa-coins" style="font-size: 3rem; color: #ffd700;"></i>
+                <h3>500 Coins</h3>
+                <div class="price">$4.99</div>
+                <button class="buy-btn">Buy Now</button>
+            </div>
+            <div class="store-item">
+                <i class="fas fa-gem" style="font-size: 3rem; color: #00ff41;"></i>
+                <h3>1000 Coins</h3>
+                <div class="price">$9.99</div>
+                <button class="buy-btn">Buy Now</button>
+            </div>
+            <div class="store-item">
+                <i class="fas fa-star" style="font-size: 3rem; color: #ffd700;"></i>
+                <h3>VIP Rank</h3>
+                <div class="price">$14.99</div>
+                <button class="buy-btn">Buy Now</button>
+            </div>
+            <div class="store-item">
+                <i class="fas fa-crown" style="font-size: 3rem; color: #ffeb3b;"></i>
+                <h3>MVP Rank</h3>
+                <div class="price">$29.99</div>
+                <button class="buy-btn">Buy Now</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Staff -->
+    <section id="staff" class="section">
+        <h2 class="glow"><i class="fas fa-users"></i> Our Staff Team</h2>
+        <div class="staff-grid">
+            <div class="staff-card">
+                <i class="fas fa-user-tie" style="font-size: 3rem;"></i>
+                <h3>YASH</h3>
+                <p>Owner</p>
+            </div>
+            <div class="staff-card">
+                <i class="fas fa-user-tie" style="font-size: 3rem;"></i>
+                <h3>ARITRAGAMERRZ</h3>
+                <p>Founder</p>
+            </div>
+            <div class="staff-card">
+                <i class="fas fa-user-shield"></i>
+                <h3>Head Admin</h3>
+                <p>Coming Soon</p>
+            </div>
+            <div class="staff-card">
+                <i class="fas fa-user-shield"></i>
+                <h3>Moderators</h3>
+                <p>Recruiting!</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Support -->
+    <section id="support" class="section">
+        <h2 class="glow"><i class="fas fa-headset"></i> Get Support</h2>
+        <p style="text-align: center; font-size: 1.2rem; margin-bottom: 2rem;">
+            Join our Discord for support, updates, and community!
+        </p>
+        <a href="https://discord.gg/gk6u5ymTd6" target="_blank" class="discord-btn">
+            <i class="fab fa-discord"></i> Join Discord Server
+        </a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 CREEPER NET. Made with <i class="fas fa-heart" style="color: #00ff41;"></i> by creepers.</p>
+        <p>Server IP: <strong>play.creepernet.fun</strong></p>
+    </footer>
+
+    <script>
+        // Copy IP to clipboard
+        function copyIP(event) {
+            if (event) event.stopPropagation();
+            navigator.clipboard.writeText('play.creepernet.fun').then(() => {
+                const btn = event ? event.target : document.querySelector('.copy-btn');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                btn.style.background = '#00cc33';
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = '#00ff41';
+                }, 2000);
+            });
+        }
+
+        // Smooth scrolling for nav links
+        document
